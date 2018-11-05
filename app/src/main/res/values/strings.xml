@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MarsPlay</string>
+    <string name="placeholder_camera_title">Looks great, capture your style now</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="permission_required_placeholder">MarsPlay needs SD card READ WRITE and CAMERA permissions to work properly</string>
+    <string name="no_camera_found">No camera found</string>
+    <string name="no_sd_card">No SD card to store images</string>
+</resources>
