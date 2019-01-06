@@ -75,7 +75,7 @@ class CameraPreview(context: Context) : SurfaceView(context), SurfaceHolder.Call
         params.setPictureSize(getDefaultWidth(), getDefaultHeight())
         params.pictureFormat = PixelFormat.JPEG
         params.jpegQuality = quality
-        params.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
+        params.focusMode = if (params.focusMode.equals(Camera.Parameters.FOCUS_MODE_AUTO)) Camera.Parameters.FOCUS_MODE_AUTO else params.focusMode
         cameraLocal.parameters = params
     }
 
