@@ -3,25 +3,30 @@
 package com.vikaskumar.marsplay
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
-import android.hardware.*
+import android.hardware.Camera
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_main.*
 import com.vikaskumar.marsplay.Utility.Companion.getDeviceHeight
 import com.vikaskumar.marsplay.Utility.Companion.getDeviceWidth
+import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Camera.PictureCallback {
 
     private lateinit var camera: Camera
     private val permissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -41,6 +46,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun initViews() {
         setSupportActionBar(toolbar)
+        setupCaptureListener()
+    }
+
+    private fun setupCaptureListener() {
+        ivCapture.setOnClickListener { camera.takePicture(null, null, this) }
     }
 
     private fun askPermissionIfApplicable() {
@@ -150,4 +160,36 @@ class MainActivity : AppCompatActivity() {
     private fun showMessage(message: String) {
         Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
     }
+
+    override fun onPictureTaken(data: ByteArray?, camera: Camera?) {
+        val picture: File = Utility.getOutputMediaFile(Utility.MEDIA_TYPE_IMAGE) ?: run {
+            Log.d(TAG, ("Error creating media file, check storage permissions"))
+            return
+        }
+        try {
+            val outputStream = FileOutputStream(picture)
+            outputStream.write(data)
+            outputStream.close()
+            displayThumbnail(picture)
+            camera!!.stopPreview()
+            camera.startPreview()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun displayThumbnail(picture: File) {
+        val alert = AlertDialog.Builder(this@MainActivity, android.R.style.Theme_Black_NoTitleBar_Fullscreen).create()
+        val view = layoutInflater.inflate(R.layout.layout_thumbnail, null, false)
+        view.findViewById<ImageView>(R.id.ivClose).setOnClickListener { alert.dismiss() }
+        view.findViewById<ImageView>(R.id.ivThumbnail).setImageURI(Uri.fromFile(picture))
+        alert.setView(view)
+        alert.setCancelable(false)
+        val params = alert.getWindow().getAttributes()
+        params.width = WindowManager.LayoutParams.MATCH_PARENT
+        params.height = WindowManager.LayoutParams.MATCH_PARENT
+        alert.getWindow().setAttributes(params as android.view.WindowManager.LayoutParams)
+        alert.show()
+    }
+
 }

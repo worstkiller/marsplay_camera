@@ -14,6 +14,7 @@
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
             android:elevation="6dp"
+            app:titleTextColor="@color/white_off"
             android:background="@android:color/transparent"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
@@ -38,6 +39,7 @@
                 android:layout_height="wrap_content"/>
 
         <ImageView
+                android:id="@+id/ivCapture"
                 android:layout_marginLeft="@dimen/margin_16"
                 android:layout_marginRight="@dimen/margin_16"
                 android:layout_marginBottom="@dimen/margin_16"
